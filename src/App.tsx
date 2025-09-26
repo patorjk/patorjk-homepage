@@ -1,29 +1,16 @@
 import './App.css'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "@/components/ui/table"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card";
+import {Table, TableBody, TableCell, TableRow,} from "@/components/ui/table"
 import {SimpleLink} from "./components/SimpleLink";
-import {type JSX} from 'react';
 import YoutubeIcon from './assets/youtube-nes-icon.png';
 import GithubIcon from './assets/github-nes-icon.png';
 import InstagramIcon from './assets/instagram-nes-icon.png';
 import GmailIcon from './assets/gmail-nes-icon.png';
-
-interface ContentItem {
-  title: string,
-  description: string | JSX.Element,
-  link: string,
-}
+import type {ContentItem} from "@/components/types.ts";
+import {ContentTable} from "@/components/ContentTable.tsx";
+import {LightsOut} from "react-halloween";
+import {useEffect, useState} from "react";
+import {ThemeProvider} from "@/components/theme/ThemeProvider";
 
 const patorjkAsciiArt = `
               __                 __ __    
@@ -34,6 +21,11 @@ ___________ _/  |_  ___________ |__|  | __
 |__|       \\/               \\______|    \\/
 `;
 
+interface WindowSize {
+  width: number;
+  height: number;
+}
+
 function App() {
 
   const contentItems: ContentItem[] = [
@@ -41,6 +33,12 @@ function App() {
       title: "Arial ASCII Art Gallery",
       description: "A collection of ASCII Art from the AOL community of the late 90's. The aim of this gallery is to preserve and showcase the cool art from this period.",
       link: "//patorjk.com/arial-ascii-art/",
+    },
+    {
+      title: 'Chain Letter Archive',
+      description:
+        <span>Chain letters were the Internet's first form of viral media. They were a precursor to today's memes and social media posts. Some of the jokes haven't aged well, but these are an interesting part of the internet's history.</span>,
+      link: '//patorjk.com/misc/chainletters/'
     },
     {
       title: "Color Palette Generator",
@@ -186,173 +184,161 @@ function App() {
     },
   ];
 
+  const [windowSize, setWindowSize] = useState<WindowSize>({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
-    <div
-      className={'flex flex-col gap-8 justify-center items-center relative p-10 max-w-xl md:max-w-4xl justify-self-center'}>
+    <ThemeProvider defaultTheme="system" storageKey="homepage-theme">
+      <div
+        className={'flex flex-col gap-8 justify-center items-center relative p-10 max-w-xl md:max-w-4xl justify-self-center'}>
+        {windowSize.width > 600 && <LightsOut size={300}/>}
+        <div className={'flex flex-col  gap-2'}>
+          <h1 className="scroll-m-20 text-4xl font-semibold tracking-tight sm:text-3xl xl:text-4xl">
+            patorjk.com
+          </h1>
+          <p className={"text-muted-foreground text-[1.05rem] sm:text-base"}>
+            Welcome! My name is Pat. I am software software developer and amateur photographer. Here's you'll find an
+            array of web apps, programming
+            tutorials, and random
+            projects.
+          </p>
+        </div>
 
-      <div className={'flex flex-col  gap-2'}>
-        <h1 className="scroll-m-20 text-4xl font-semibold tracking-tight sm:text-3xl xl:text-4xl">
-          patorjk.com
-        </h1>
-        <p className={"text-muted-foreground text-[1.05rem] sm:text-base"}>
-          Welcome! My name is Pat. I am software software developer and amateur photographer. Here's you'll find an
-          array of web apps, programming
-          tutorials, and random
-          projects.
-        </p>
-      </div>
+        <div className={'w-full'}>
+          <Card className="w-full gap-2">
+            <CardHeader>
+              <CardTitle>Web apps, games, and other interesting things</CardTitle>
+              <CardDescription>
+                Below is selection of stuff from this website. There's a lot more content buried in my <SimpleLink
+                href={"//patorjk.com/blog"}
+                label={'blog'}/>, but the list below is a nice showcase.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ContentTable items={contentItems}/>
+            </CardContent>
+          </Card>
+        </div>
 
-      <div className={'w-full'}>
-        <Card className="w-full ">
-          <CardHeader>
-            <CardTitle>Web apps, games, and other interesting things</CardTitle>
-            <CardDescription>
-              Below is selection of stuff from this website. There's a lot more content buried in my <SimpleLink
-              href={"//patorjk.com/blog"}
-              label={'blog'}/>, but the list below is a nice showcase.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableBody>
+        <div className={'w-full'}>
+          <Card className="w-full gap-2">
+            <CardHeader>
+              <CardTitle>Notable blog entries</CardTitle>
+              <CardDescription className="flex flex-col gap-2">
+                <p>
+                  I have a <SimpleLink href={"//patorjk.com/blog"} label={'blog'}/> where I write stuff. I've written
+                  hundreds of entries, and
+                  most have no comments. I don't even know if anyone regularly reads it. However, occasionally I write
+                  something
+                  that piques people's interest and gets a discussion going. Below are the most popular entries.
+                </p>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ContentTable items={blogItems}/>
+            </CardContent>
+          </Card>
+        </div>
 
-                {contentItems.map((item) => (
-                  <TableRow key={item.link}>
-                    <TableCell className="font-medium whitespace-normal break-words min-w-[170px]"><SimpleLink
-                      href={item.link}
-                      label={item.title}/></TableCell>
-                    <TableCell className={"whitespace-normal break-words"}>{item.description}</TableCell>
+        <div className={'w-full'}>
+          <Card className="w-full gap-2">
+            <CardHeader>
+              <CardTitle>Legacy content - Visual Basic 6.0</CardTitle>
+              <CardDescription className="flex flex-col gap-2">
+                <p>
+                  This site started out as a Visual Basic (VB) help web site in 1998. When I relaunched this site in
+                  2007,
+                  I debated removing this stuff. I hadn't been a member of the VB community in years and the language
+                  seemed
+                  like it was
+                  on its way out. But it felt wrong to remove the material that had built this site, so I decided to
+                  keep it up for nostalgic reasons.
+                </p>
+                <p>In the years that followed I
+                  noticed
+                  that this content was still wildly popular. In fact, for a while the Visual Basic
+                  Arrays tutorial was the most popular piece of content on this site. I would even get an occasional
+                  email
+                  about needing help with Visual Basic. It was strange.
+                </p>
+                <p>
+                  Then I discovered that Visual Basic was being taught in introductory level programming classes in some
+                  countries and students were finding their way to my site for help. It boggled my mind that a cache
+                  of programming examples created by AOL hackers was now being used as study material for students all
+                  around the world. So I decided to keep these examples up indefinitely.
+                </p>
+                <p>
+                  I will say that at this point it's been a very long time since anyone seriously asked me for VB help,
+                  and
+                  these example are probably not useful anymore. But you never know who this content may help out, and
+                  at the very least it's interesting for taking a look back into the past.
+                </p>
+
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ContentTable items={legacyItems}/>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className={'w-full'}>
+          <Card className="w-full gap-2">
+            <CardHeader>
+              <CardTitle>Pat's Social Media</CardTitle>
+              <CardDescription className="flex flex-col gap-2">
+                <p>
+                  Below are some social links.
+                </p>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableBody>
+
+                  <TableRow>
+                    {/* Social icons taken from https://github.com/nostalgic-css/NES.css */}
+                    <TableCell
+                      className="font-medium whitespace-normal flex flex-row gap-4 items-center justify-center flex-wrap">
+                      <a title={'My YouTube Channel'} href={"https://www.youtube.com/@patorjk"}><img src={YoutubeIcon}
+                                                                                                     width={64}
+                                                                                                     height={64}/></a>
+                      <a title={'My Github Profile'} href={"https://github.com/patorjk"}><img src={GithubIcon}
+                                                                                              width={64}
+                                                                                              height={64}/></a>
+                      <a title={'My Instagram Page'} href={"https://instagram.com/patorjk"}><img src={InstagramIcon}
+                                                                                                 width={64}
+                                                                                                 height={64}/></a>
+                      <a title={'Email Me'} href={"mailto:patorjk@gmail.com"}><img src={GmailIcon} width={64}
+                                                                                   height={64}/></a>
+
+                    </TableCell>
                   </TableRow>
-                ))}
 
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-
-      <div className={'w-full'}>
-        <Card className="w-full ">
-          <CardHeader>
-            <CardTitle>Notable blog entries</CardTitle>
-            <CardDescription className="flex flex-col gap-2">
-              <p>
-                I have a <SimpleLink href={"//patorjk.com/blog"} label={'blog'}/> where I write stuff. I've written
-                hundreds of entries, and
-                most have no comments. I don't even know if anyone regularly reads it. However, occasionally I write
-                something
-                that piques people's interest and gets a discussion going. Below are the most popular entries.
-              </p>
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableBody>
-
-                {blogItems.map((item) => (
-                  <TableRow key={item.link}>
-                    <TableCell className="font-medium whitespace-normal break-words min-w-[170px]"><SimpleLink
-                      href={item.link}
-                      label={item.title}/></TableCell>
-                    <TableCell className={"whitespace-normal break-words"}>{item.description}</TableCell>
-                  </TableRow>
-                ))}
-
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className={'w-full'}>
-        <Card className="w-full ">
-          <CardHeader>
-            <CardTitle>Legacy content - Visual Basic 6.0</CardTitle>
-            <CardDescription className="flex flex-col gap-2">
-              <p>
-                This site started out as a Visual Basic (VB) help web site in 1998. When I relaunched this site in 2007,
-                I debated removing this stuff. I hadn't been a member of the VB community in years and the language
-                seemed
-                like it was
-                on its way out. But it felt wrong to remove the material that had built this site, so I decided to
-                keep it up for nostalgic reasons.
-              </p>
-              <p>In the years that followed I
-                noticed
-                that this content was still wildly popular. In fact, for a while the Visual Basic
-                Arrays tutorial was the most popular piece of content on this site. I would even get an occasional email
-                about needing help with Visual Basic. It was strange.
-              </p>
-              <p>
-                Then I discovered that Visual Basic was being used in introductory level programming classes in some
-                countries and students were finding their way to my site for help. It boggled my mind that a cache
-                of programming examples created by AOL hackers was now being used as study material for students around
-                the world. So I decided to keep these examples up indefinitely.
-              </p>
-              <p>
-                I will say that at this point it's been a long time since anyone seriously asked me for VB help, and
-                these example are probably not useful anymore. But you never know who this content may help out, and
-                at the very least it's interesting for taking a look back into the past.
-              </p>
-
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableBody>
-
-                {legacyItems.map((item) => (
-                  <TableRow key={item.link}>
-                    <TableCell className="font-medium whitespace-normal break-words min-w-[170px]"><SimpleLink
-                      href={item.link}
-                      label={item.title}/></TableCell>
-                    <TableCell className={"whitespace-normal break-words"}>{item.description}</TableCell>
-                  </TableRow>
-                ))}
-
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className={'w-full'}>
-        <Card className="w-full ">
-          <CardHeader>
-            <CardTitle>Pat's Social Media</CardTitle>
-            <CardDescription className="flex flex-col gap-2">
-              <p>
-                Below are some social links.
-              </p>
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableBody>
-
-                <TableRow>
-                  {/* Social icons taken from https://github.com/nostalgic-css/NES.css */}
-                  <TableCell
-                    className="font-medium whitespace-normal flex flex-row gap-4 items-center justify-center flex-wrap">
-                    <a title={'My YouTube Channel'} href={"https://www.youtube.com/@patorjk"}><img src={YoutubeIcon}
-                                                                                                   width={64}
-                                                                                                   height={64}/></a>
-                    <a title={'My Github Profile'} href={"https://github.com/patorjk"}><img src={GithubIcon} width={64}
-                                                                                            height={64}/></a>
-                    <a title={'My Instagram Page'} href={"https://instagram.com/patorjk"}><img src={InstagramIcon}
-                                                                                               width={64} height={64}/></a>
-                    <a title={'Email Me'} href={"mailto:patorjk@gmail.com"}><img src={GmailIcon} width={64}
-                                                                                 height={64}/></a>
-
-                  </TableCell>
-                </TableRow>
-
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    </ThemeProvider>
   );
 }
 
