@@ -11,6 +11,7 @@ import {ContentTable} from "@/components/ContentTable.tsx";
 import {LightsOut} from "react-halloween";
 import {useEffect, useState} from "react";
 import {ThemeProvider} from "@/components/theme/ThemeProvider";
+import Cookies from 'js-cookie';
 
 const patorjkAsciiArt = `
               __                 __ __    
@@ -21,12 +22,42 @@ ___________ _/  |_  ___________ |__|  | __
 |__|       \\/               \\______|    \\/
 `;
 
+const patorjkAsciiArtSmall = `
+              __   
+___________ _/  |_ 
+\\____ \\__  \\\\   __\\
+|  |_> > __ \\|  |  
+|   __(____  /__|  
+|__|       \\/      
+`;
+
+
 interface WindowSize {
   width: number;
   height: number;
 }
 
+const LIGHTS_OUT_COOKIE = 'HIDE_LIGHTS_OUT_HOMEPAGE' as const;
+
 function App() {
+
+  const hideLightsOut = Cookies.get(LIGHTS_OUT_COOKIE)
+
+  useEffect(() => {
+    const onClick = () => {
+      if (hideLightsOut !== 'true') {
+        Cookies.set(LIGHTS_OUT_COOKIE, 'true', {
+          expires: 7,        // expires in 7 days
+          path: '/',         // available across the entire site
+          sameSite: 'strict' // CSRF protection
+        });
+      }
+    }
+    window.addEventListener('click', onClick);
+    return () => {
+      window.removeEventListener('click', onClick);
+    }
+  }, [hideLightsOut]);
 
   const contentItems: ContentItem[] = [
     {
@@ -91,7 +122,14 @@ function App() {
         <div className="font-mono whitespace-pre text-xs">
           {patorjkAsciiArt}
         </div>
-      </div>, link: '//patorjk.com/software/taag/'
+      </div>,
+      descriptionMobile: <div>
+        <span>Create text art from words. Like this:</span>
+        <div className="font-mono whitespace-pre text-xs">
+          {patorjkAsciiArtSmall}
+        </div>
+      </div>,
+      link: '//patorjk.com/software/taag/'
     },
     {
       title: 'Typing Speed Test',
@@ -208,7 +246,7 @@ function App() {
     <ThemeProvider defaultTheme="system" storageKey="homepage-theme">
       <div
         className={'flex flex-col gap-8 justify-center items-center relative p-10 max-w-xl md:max-w-4xl justify-self-center'}>
-        {windowSize.width > 600 && <LightsOut size={300}/>}
+        {windowSize.width > 600 && hideLightsOut !== 'true' && <LightsOut size={300}/>}
         <div className={'flex flex-col  gap-2'}>
           <h1 className="scroll-m-20 text-4xl font-semibold tracking-tight sm:text-3xl xl:text-4xl">
             patorjk.com
@@ -287,7 +325,7 @@ function App() {
                 <p>
                   I will say that at this point it's been a very long time since anyone seriously asked me for VB help,
                   and
-                  these example are probably not useful anymore. But you never know who this content may help out, and
+                  these examples are probably not useful anymore. But you never know who this content may help out, and
                   at the very least it's interesting for taking a look back into the past.
                 </p>
 

@@ -24,7 +24,7 @@ const ContentTable = ({items}: ContentTableProps) => {
               <TableRow key={item.link}>
                 <TableCell className="whitespace-normal break-words"><SimpleLink
                   href={item.link}
-                  label={item.title}/> - {item.description}</TableCell>
+                  label={item.title}/> - {item.descriptionMobile ?? item.description}</TableCell>
               </TableRow>
             ))
             :
