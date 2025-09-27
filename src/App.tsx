@@ -105,6 +105,33 @@ function App() {
       link: "//patorjk.com/old-school-gaming-filters/"
     },
     {
+      title: 'Photo Mosaic Gallery',
+      description:
+        <span>Photo mosaics are images that are made out of images. This gallery is composed of mosaics I made with a program I wrote.</span>,
+      link: '//patorjk.com/software/mosaicer/mosaics.htm'
+    },
+    {
+      title: 'Scrolling Text Time Waster',
+      description: 'Colors, scrolling, fun?',
+      link: '//patorjk.com/misc/scrollingtext/timewaster.php'
+    },
+    {
+      title: 'Snake Game',
+      description: 'JavaScript Snake game. The classic game of snake done in JS. Very old game.',
+      link: '//patorjk.com/games/snake/'
+    },
+    {
+      title: 'Subpixel Snake Game',
+      description: <span>A game of snake that's so small that you need a microscope to play it! I did a <SimpleLink
+        label={'video'} href={"https://www.youtube.com/watch?v=iDwganLjpW0"}/> explaining the game if you're curious about it.</span>,
+      link: '//patorjk.com/games/subpixel-snake/'
+    },
+    {
+      title: 'Slider Puzzles',
+      description: 'An assortment of various slider puzzles with a neat spinning interface.',
+      link: '//patorjk.com/games/sliderpuzzles/'
+    },
+    {
       title: 'Text Color Fader', description: <span>
         Create <span style={{color: '#ff0000'}}>c</span><span style={{color: '#ee0011'}}>o</span><span
         style={{color: '#dd0022'}}>l</span><span style={{color: '#cc0033'}}>o</span><span
@@ -135,34 +162,6 @@ function App() {
       title: 'Typing Speed Test',
       description: 'How fast kind you type? This app is kind of old, but still serves its purposes and it gives you some nice stats and has some handy options.',
       link: '//patorjk.com/typing-speed-test/'
-    },
-    {
-      title: 'Scrolling Text Time Waster',
-      description: 'Colors, scrolling, fun?',
-      link: '//patorjk.com/misc/scrollingtext/timewaster.php'
-    },
-    {
-      title: 'Snake Game',
-      description: 'JavaScript Snake game. The classic game of snake done in JS. Very old game.',
-      link: '//patorjk.com/games/snake/'
-    },
-    {
-      title: 'Subpixel Snake Game',
-      description: <span>A game of snake that's so small that you need a microscope to play it! I did a <SimpleLink
-        label={'video'} href={"https://www.youtube.com/watch?v=iDwganLjpW0"}/> explaining the game if you're curious about it.</span>,
-      link: '//patorjk.com/games/subpixel-snake/'
-    },
-    {
-      title: 'Slider Puzzles',
-      description: 'An assortment of various slider puzzles with a neat spinning interface.',
-      link: '//patorjk.com/games/sliderpuzzles/'
-    },
-    {
-      title: '90\'s Photo Mosaics',
-      description:
-        <span>I made these with an app I wrote in high school. In 2025 I remade the app, you can check it out <SimpleLink
-          href={'https://github.com/patorjk/mosaicer'} label={'here'}/>.</span>,
-      link: '//patorjk.com/software/mosaicer/mosaics.htm'
     },
   ];
 
