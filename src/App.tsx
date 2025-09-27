@@ -300,7 +300,8 @@ function App() {
               <CardTitle>Legacy content - Visual Basic 6.0</CardTitle>
               <CardDescription className="flex flex-col gap-2">
                 <p>
-                  This site started out as a Visual Basic (VB) help web site in 1998. When I relaunched this site in
+                  This site started out in 1998 as a help web site for the Visual Basic (VB) programming language.
+                  When I relaunched this site in
                   2007,
                   I debated removing this stuff. I hadn't been a member of the VB community in years and the language
                   seemed
