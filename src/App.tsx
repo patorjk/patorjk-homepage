@@ -9,7 +9,7 @@ import GmailIcon from './assets/gmail-nes-icon.png';
 import type {ContentItem} from "@/components/types.ts";
 import {ContentTable} from "@/components/ContentTable.tsx";
 import {LightsOut} from "react-halloween";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {ThemeProvider} from "@/components/theme/ThemeProvider";
 import Cookies from 'js-cookie';
 
@@ -43,19 +43,13 @@ function App() {
 
   const hideLightsOut = Cookies.get(LIGHTS_OUT_COOKIE)
 
-  useEffect(() => {
-    const onClick = () => {
-      if (hideLightsOut !== 'true') {
-        Cookies.set(LIGHTS_OUT_COOKIE, 'true', {
-          expires: 7,        // expires in 7 days
-          path: '/',         // available across the entire site
-          sameSite: 'strict' // CSRF protection
-        });
-      }
-    }
-    window.addEventListener('click', onClick);
-    return () => {
-      window.removeEventListener('click', onClick);
+  const onLightOnEnd = useCallback(() => {
+    if (hideLightsOut !== 'true') {
+      Cookies.set(LIGHTS_OUT_COOKIE, 'true', {
+        expires: 7,        // expires in 7 days
+        path: '/',         // available across the entire site
+        sameSite: 'strict' // CSRF protection
+      });
     }
   }, [hideLightsOut]);
 
@@ -245,7 +239,7 @@ function App() {
     <ThemeProvider defaultTheme="system" storageKey="homepage-theme">
       <div
         className={'flex flex-col gap-8 justify-center items-center relative p-10 max-w-xl md:max-w-4xl justify-self-center'}>
-        {windowSize.width > 600 && hideLightsOut !== 'true' && <LightsOut size={300}/>}
+        {windowSize.width > 600 && hideLightsOut !== 'true' && <LightsOut size={300} onLightsOnEnd={onLightOnEnd}/>}
         <div className={'flex flex-col  gap-2'}>
           <h1 className="scroll-m-20 text-4xl font-semibold tracking-tight sm:text-3xl xl:text-4xl">
             patorjk.com
