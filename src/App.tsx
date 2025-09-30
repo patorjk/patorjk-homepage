@@ -10,8 +10,9 @@ import type {ContentItem} from "@/components/types.ts";
 import {ContentTable} from "@/components/ContentTable.tsx";
 import {LightsOut} from "react-halloween";
 import {useCallback, useEffect, useState} from "react";
-import {ThemeProvider} from "@/components/theme/ThemeProvider";
 import Cookies from 'js-cookie';
+import {useTheme} from "@/components/theme/useTheme.ts";
+import {Moon, Sun} from "lucide-react";
 
 const patorjkAsciiArt = `
               __                 __ __    
@@ -42,6 +43,10 @@ const LIGHTS_OUT_COOKIE = 'HIDE_LIGHTS_OUT_HOMEPAGE' as const;
 function App() {
 
   const hideLightsOut = Cookies.get(LIGHTS_OUT_COOKIE)
+
+  const {theme, setTheme} = useTheme();
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+  const darkMode = theme === 'dark' || theme === 'system' && mediaQuery.matches;
 
   const onLightOnEnd = useCallback(() => {
     if (hideLightsOut !== 'true') {
@@ -236,7 +241,7 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider defaultTheme="system" storageKey="homepage-theme">
+    <>
       <div
         className={'flex flex-col gap-8 justify-center items-center relative p-10 max-w-xl md:max-w-4xl justify-self-center'}>
         {windowSize.width > 600 && hideLightsOut !== 'true' && <LightsOut size={300} onLightsOnEnd={onLightOnEnd}/>}
@@ -369,8 +374,18 @@ function App() {
             </CardContent>
           </Card>
         </div>
+
+        <div className="mt-6 text-center flex flex-cols align-center justify-center space-x-4">
+          <button
+            type={"button"}
+            onClick={() => setTheme(darkMode ? 'light' : 'dark')}
+            className={`cursor-pointer px-6 py-3 rounded-lg shadow-lg hover:opacity-80 transition-opacity flex flex-cols items-center gap-2 justify-center`}
+          >
+            {darkMode ? <Sun className="w-5 h-5 text-yellow-400"/> : <Moon className="w-5 h-5 text-indigo-600"/>} Theme
+          </button>
+        </div>
       </div>
-    </ThemeProvider>
+    </>
   );
 }
 

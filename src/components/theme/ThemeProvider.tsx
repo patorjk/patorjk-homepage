@@ -1,21 +1,11 @@
-import {createContext, useEffect, useState} from "react"
-
-type Theme = "dark" | "light" | "system"
+import {useEffect, useMemo, useState} from "react"
+import {type Theme, ThemeProviderContext as ThemeProviderContext1} from "@/components/theme/ThemeProviderContext.tsx";
 
 interface ThemeProviderProps {
   children: React.ReactNode
   defaultTheme?: Theme
   storageKey?: string
 }
-
-interface ThemeProviderState {
-  theme: Theme
-  setTheme: (theme: Theme) => void
-}
-
-export const ThemeProviderContext = createContext<ThemeProviderState | undefined>(
-  undefined
-)
 
 export function ThemeProvider({
                                 children,
@@ -60,18 +50,18 @@ export function ThemeProvider({
     return () => mediaQuery.removeEventListener("change", handleChange)
   }, [theme])
 
-  const value = {
+  const value = useMemo(() => ({
     theme,
     setTheme: (theme: Theme) => {
       localStorage.setItem(storageKey, theme)
       setTheme(theme)
     },
-  }
+  }), [theme, storageKey]);
 
   return (
-    <ThemeProviderContext.Provider {...props} value={value}>
+    <ThemeProviderContext1 {...props} value={value}>
       {children}
-    </ThemeProviderContext.Provider>
+    </ThemeProviderContext1>
   )
 }
 
