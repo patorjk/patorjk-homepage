@@ -13,6 +13,7 @@ import {useCallback, useEffect, useState} from "react";
 import Cookies from 'js-cookie';
 import {useTheme} from "@/components/theme/useTheme.ts";
 import {Moon, Sun} from "lucide-react";
+import {useIsMobile} from "@/hooks/useIsMobile.ts";
 
 const patorjkAsciiArt = `
               __                 __ __    
@@ -51,12 +52,14 @@ function App() {
   const onLightOnEnd = useCallback(() => {
     if (hideLightsOut !== 'true') {
       Cookies.set(LIGHTS_OUT_COOKIE, 'true', {
-        expires: 7,        // expires in 7 days
+        expires: 30,        // expires in 7 days
         path: '/',         // available across the entire site
         sameSite: 'strict' // CSRF protection
       });
     }
   }, [hideLightsOut]);
+
+  const isMobile = useIsMobile();
 
   const contentItems: ContentItem[] = [
     {
@@ -83,7 +86,8 @@ function App() {
     {
       title: "Keyboard Layout Analyzer",
       description: "The default layout of the keys on your keyboard is not very good. There are actually several popular layouts you can set yourself up with. This app analyzes the text you type and lets you see what layout would benefit you most.",
-      link: "//patorjk.com/keyboard-layout-analyzer/"
+      link: "//patorjk.com/keyboard-layout-analyzer/",
+      desktop: true
     },
     {
       title: "My Blog",
@@ -117,18 +121,21 @@ function App() {
     {
       title: 'Snake Game',
       description: 'JavaScript Snake game. The classic game of snake done in JS. Very old game.',
-      link: '//patorjk.com/games/snake/'
+      link: '//patorjk.com/games/snake/',
+      desktop: true,
     },
     {
       title: 'Subpixel Snake Game',
       description: <span>A game of snake that's so small that you need a microscope to play it! I did a <SimpleLink
         label={'video'} href={"https://www.youtube.com/watch?v=iDwganLjpW0"}/> explaining the game if you're curious about it.</span>,
-      link: '//patorjk.com/games/subpixel-snake/'
+      link: '//patorjk.com/games/subpixel-snake/',
+      desktop: true
     },
     {
       title: 'Slider Puzzles',
       description: 'An assortment of various slider puzzles with a neat spinning interface.',
-      link: '//patorjk.com/games/sliderpuzzles/'
+      link: '//patorjk.com/games/sliderpuzzles/',
+      desktop: true
     },
     {
       title: 'Text Color Fader', description: <span>
@@ -160,9 +167,12 @@ function App() {
     {
       title: 'Typing Speed Test',
       description: 'How fast kind you type? This app is kind of old, but still serves its purposes and it gives you some nice stats and has some handy options.',
-      link: '//patorjk.com/typing-speed-test/'
+      link: '//patorjk.com/typing-speed-test/',
+      desktop: true
     },
-  ];
+  ].filter((item) => {
+    return (!(isMobile && item?.desktop))
+  });
 
   const blogItems: ContentItem[] = [
     {
