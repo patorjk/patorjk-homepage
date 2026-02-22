@@ -260,7 +260,7 @@ function App() {
             patorjk.com
           </h1>
           <p className={"text-muted-foreground text-[1.05rem] sm:text-base"}>
-            Welcome! My name is Pat. I am software software developer and amateur photographer. Here's you'll find an
+            Welcome! My name is Pat. I am software developer and amateur photographer. Here's you'll find an
             array of web apps, programming
             tutorials, and random
             projects.
