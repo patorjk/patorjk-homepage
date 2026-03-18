@@ -8,9 +8,9 @@ import InstagramIcon from './assets/instagram-nes-icon.png';
 import GmailIcon from './assets/gmail-nes-icon.png';
 import type {ContentItem} from "@/components/types.ts";
 import {ContentTable} from "@/components/ContentTable.tsx";
-import {LightsOut} from "react-halloween";
-import {useCallback, useEffect, useState} from "react";
-import Cookies from 'js-cookie';
+//import {LightsOut} from "react-halloween";
+import {/*useCallback,*/ useEffect, useState} from "react";
+//import Cookies from 'js-cookie';
 import {useTheme} from "@/components/theme/useTheme.ts";
 import {Moon, Sun} from "lucide-react";
 import {useIsMobile} from "@/hooks/useIsMobile.ts";
@@ -39,16 +39,17 @@ interface WindowSize {
   height: number;
 }
 
-const LIGHTS_OUT_COOKIE = 'HIDE_LIGHTS_OUT_HOMEPAGE' as const;
+//const LIGHTS_OUT_COOKIE = 'HIDE_LIGHTS_OUT_HOMEPAGE' as const;
 
 function App() {
 
-  const hideLightsOut = Cookies.get(LIGHTS_OUT_COOKIE)
+  //const hideLightsOut = Cookies.get(LIGHTS_OUT_COOKIE)
 
   const {theme, setTheme} = useTheme();
   const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
   const darkMode = theme === 'dark' || theme === 'system' && mediaQuery.matches;
 
+  /*
   const onLightOnEnd = useCallback(() => {
     if (hideLightsOut !== 'true') {
       Cookies.set(LIGHTS_OUT_COOKIE, 'true', {
@@ -58,6 +59,7 @@ function App() {
       });
     }
   }, [hideLightsOut]);
+   */
 
   const isMobile = useIsMobile();
 
@@ -74,6 +76,11 @@ function App() {
       link: '//patorjk.com/misc/chainletters/'
     },
     {
+      title: "Chromostereopsis Lights Out",
+      description: <>A game of Lights Out that uses the chromostereopsis optical illusion.</>,
+      link: "//patorjk.com/games/chromostereopsis-lights-out/"
+    },
+    {
       title: "Color Palette Generator",
       description: "Creates a color palette from an image. I made it one afternoon on a lark a long time ago.",
       link: "//www.patorjk.com/color-palette-generator/"
@@ -82,6 +89,13 @@ function App() {
       title: "Gradient Image Generator",
       description: "For creating gradient images (an image that fades from one color to another). A very old app and there aren't many good reasons use it. But it's here just in case.",
       link: "//patorjk.com/gradient-image-generator/"
+    },
+    {
+      title: "Image Glitcher",
+      description: <>An application for creating glitched images (mainly jpegs). I've created a <SimpleLink
+        href={"https://www.youtube.com/watch?v=7aWFHn1wS1U"}
+        label={"YouTube video"}/> that discuss how it works and how to use it.</>,
+      link: "//patorjk.com/image-glitcher/"
     },
     {
       title: "Keyboard Layout Analyzer",
@@ -230,7 +244,7 @@ function App() {
     },
   ];
 
-  const [windowSize, setWindowSize] = useState<WindowSize>({
+  const [_windowSize, setWindowSize] = useState<WindowSize>({
     width: window.innerWidth,
     height: window.innerHeight,
   });
@@ -254,7 +268,8 @@ function App() {
     <>
       <div
         className={'flex flex-col gap-8 justify-center items-center relative p-10 max-w-xl md:max-w-4xl justify-self-center'}>
-        {windowSize.width > 600 && hideLightsOut !== 'true' && <LightsOut size={300} onLightsOnEnd={onLightOnEnd}/>}
+        {/*windowSize.width > 600 && hideLightsOut !== 'true' &&
+          <LightsOut size={300} onLightsOnEnd={onLightOnEnd}/>*/}
         <div className={'flex flex-col  gap-2'}>
           <h1 className="scroll-m-20 text-4xl font-semibold tracking-tight sm:text-3xl xl:text-4xl">
             patorjk.com
