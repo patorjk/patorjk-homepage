@@ -12,8 +12,11 @@ import {ContentTable} from "@/components/ContentTable.tsx";
 import {/*useCallback,*/ useEffect, useState} from "react";
 //import Cookies from 'js-cookie';
 import {useTheme} from "@/components/theme/useTheme.ts";
-import {Moon, Sun} from "lucide-react";
+import {Ghost, Moon, Sun} from "lucide-react";
+import {toast, Toaster} from "sonner";
 import {useIsMobile} from "@/hooks/useIsMobile.ts";
+import WaterFillHeading from "@/components/WaterFillHeading.tsx";
+import {SpookyEyes, useEyesHaveRoom} from "@/components/SpookyEyes.tsx";
 
 const patorjkAsciiArt = `
               __                 __ __    
@@ -63,11 +66,28 @@ function App() {
 
   const isMobile = useIsMobile();
 
+  // SpookyEyes wake-up plumbing: the eyes can only appear when there's
+  // room in the side margins; bumping wakeCount clears their persisted
+  // dismissals and re-opens them.
+  const eyesHaveRoom = useEyesHaveRoom();
+  const [wakeCount, setWakeCount] = useState(0);
+  const onWakeUp = () => {
+    setWakeCount((c) => c + 1);
+    if (!darkMode) {
+      toast("Hmm, that was weird... good thing we're in light mode...");
+    }
+  };
+
   const contentItems: ContentItem[] = [
     {
       title: "Arial ASCII Art Gallery",
       description: "A collection of ASCII Art from the AOL community of the late 90's. The aim of this gallery is to preserve and showcase the cool art from this period.",
       link: "//patorjk.com/arial-ascii-art/",
+    },
+    {
+      title: 'ASCII Art Sketchpad',
+      description: 'Draw ASCII art with your finger or mouse.',
+      link: '//patorjk.com/ascii-art-sketchpad/'
     },
     {
       title: 'Chain Letter Archive',
@@ -143,12 +163,6 @@ function App() {
       description: <span>A game of snake that's so small that you need a microscope to play it! I did a <SimpleLink
         label={'video'} href={"https://www.youtube.com/watch?v=iDwganLjpW0"}/> explaining the game if you're curious about it.</span>,
       link: '//patorjk.com/games/subpixel-snake/',
-      desktop: true
-    },
-    {
-      title: 'Slider Puzzles',
-      description: 'An assortment of various slider puzzles with a neat spinning interface.',
-      link: '//patorjk.com/games/sliderpuzzles/',
       desktop: true
     },
     {
@@ -266,13 +280,15 @@ function App() {
 
   return (
     <>
+      <SpookyEyes active={darkMode} wakeSignal={wakeCount}/>
+      <Toaster theme={darkMode ? 'dark' : 'light'}/>
       <div
         className={'flex flex-col gap-8 justify-center items-center relative p-10 max-w-xl md:max-w-4xl justify-self-center'}>
         {/*windowSize.width > 600 && hideLightsOut !== 'true' &&
           <LightsOut size={300} onLightsOnEnd={onLightOnEnd}/>*/}
         <div className={'flex flex-col  gap-2'}>
           <h1 className="scroll-m-20 text-4xl font-semibold tracking-tight sm:text-3xl xl:text-4xl">
-            patorjk.com
+            <WaterFillHeading text="patorjk.com"/>
           </h1>
           <p className={"text-muted-foreground text-[1.05rem] sm:text-base"}>
             Welcome! My name is Pat. I am a software developer and amateur photographer. Here you'll find an
@@ -408,6 +424,15 @@ function App() {
           >
             {darkMode ? <Sun className="w-5 h-5 text-yellow-400"/> : <Moon className="w-5 h-5 text-indigo-600"/>} Theme
           </button>
+          {eyesHaveRoom &&
+            <button
+              type={"button"}
+              onClick={onWakeUp}
+              className={`cursor-pointer px-6 py-3 rounded-lg shadow-lg hover:opacity-80 transition-opacity flex flex-cols items-center gap-2 justify-center`}
+            >
+              <Ghost className="w-5 h-5 text-purple-500"/> Wake up
+            </button>
+          }
         </div>
       </div>
     </>
