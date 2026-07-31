@@ -194,9 +194,8 @@ function App() {
     },
     {
       title: 'Typing Speed Test',
-      description: 'How fast kind you type? This app is kind of old, but still serves its purposes and it gives you some nice stats and has some handy options.',
-      link: '//patorjk.com/typing-speed-test/',
-      desktop: true
+      description: 'How fast can you type? Are you willing to put your skills to the test? This app measures your typing skills and gives you a heatmap of how fast you type.',
+      link: '//patorjk.com/typing-speed-test/'
     },
   ].filter((item) => {
     return (!(isMobile && item?.desktop))
