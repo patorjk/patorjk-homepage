@@ -106,6 +106,11 @@ function App() {
       link: "//www.patorjk.com/color-palette-generator/"
     },
     {
+      title: "Digital Rain Scroller",
+      description: "Think the Matrix. This is a digital rain prototype I made. I'll explain why this is here at some point in the future.",
+      link: "//patorjk.com/misc/matrix/"
+    },
+    {
       title: "Gradient Image Generator",
       description: "For creating gradient images (an image that fades from one color to another). A very old app and there aren't many good reasons use it. But it's here just in case.",
       link: "//patorjk.com/gradient-image-generator/"
