@@ -3,28 +3,30 @@ import { Eyes, type EyeLayout, type EyeLayoutPresets } from "react-halloween";
 import { useIsMobile } from "@/hooks/useIsMobile.ts";
 
 /**
- * SpookyEyes — four sets of eyes that lurk in the side margins of the page
- * (dark mode, desktop only).
- *
  * This wraps the eyes component from react-halloween
  */
 
-/** Width of the content column: md:max-w-4xl = 56rem = 896px */
 const CONTENT_MAX_W = 896;
-/** Width of one set of eyes */
 const EYES_W = 90;
-/** Margin must fit the eyes plus some breathing room on each side */
 const MIN_MARGIN = EYES_W + 48;
-
-/** localStorage key holding the JSON array of dismissed eye-set indexes */
+const TOP_JITTER_VH = 7;
+const EYES_H = EYES_W * 0.8;
+const X_JITTER_FRACTION = 0.08;
 const SLEEPING_EYES_KEY = "SPOOKY_EYES_SLEEPING";
 
-function readDismissed(): number[] {
+export function readEyesAsleep(): boolean {
   try {
-    const parsed: unknown = JSON.parse(localStorage.getItem(SLEEPING_EYES_KEY) ?? "[]");
-    return Array.isArray(parsed) ? parsed.filter((n): n is number => typeof n === "number") : [];
+    return localStorage.getItem(SLEEPING_EYES_KEY) === "true";
   } catch {
-    return [];
+    return false;
+  }
+}
+
+export function writeEyesAsleep(asleep: boolean): void {
+  try {
+    localStorage.setItem(SLEEPING_EYES_KEY, String(asleep));
+  } catch {
+    /* ignore */
   }
 }
 
@@ -47,17 +49,94 @@ export function useEyesHaveRoom(): boolean {
   return !isMobile && hasSpace;
 }
 
-/** A 4th eye style ("weary") to go with the 3 built-in presets */
+/**
+ * Custom eye styles
+ */
+
+const CLOSED = "M 0 4 C 3 4 7 4 10 4 C 7 4 3 4 0 4";
+
 const wearyLayout: EyeLayout = {
   left: {
     opened: "M 0 4 C 3 6 7 6 10 4 C 7 2 3 2 0 4",
-    closed: "M 0 4 C 3 4 7 4 10 4 C 7 4 3 4 0 4",
+    closed: CLOSED,
   },
   right: {
     opened: "M 0 4 C 3 6 7 6 10 4 C 7 2 3 2 0 4",
-    closed: "M 0 4 C 3 4 7 4 10 4 C 7 4 3 4 0 4",
+    closed: CLOSED,
   },
   pupil: { cx: 5, cy: 4 },
+};
+
+const startledLayout: EyeLayout = {
+  left: {
+    opened: "M 0 4 C 2 7.5 8 7.5 10 4 C 8 0.5 2 0.5 0 4",
+    closed: CLOSED,
+  },
+  right: {
+    opened: "M 0 4 C 2 7.5 8 7.5 10 4 C 8 0.5 2 0.5 0 4",
+    closed: CLOSED,
+  },
+  pupil: { cx: 5, cy: 4 },
+};
+
+const slyLayout: EyeLayout = {
+  left: {
+    opened: "M 0 4 C 3 6.5 7 6.5 10 4 C 8 2.7 2 2.7 0 4",
+    closed: CLOSED,
+  },
+  right: {
+    opened: "M 0 4 C 3 6.5 7 6.5 10 4 C 8 2.7 2 2.7 0 4",
+    closed: CLOSED,
+  },
+  pupil: { cx: 5, cy: 4.5 },
+};
+
+const crazedLayout: EyeLayout = {
+  left: {
+    opened: "M 0 4 C 2 7.6 8 7.6 10 4 C 8 0.4 2 0.4 0 4",
+    closed: CLOSED,
+  },
+  right: {
+    opened: "M 0 4 C 3 5.5 7 5.5 10 4 C 7 2.5 3 2.5 0 4",
+    closed: CLOSED,
+  },
+  pupil: { cx: 5, cy: 4 },
+};
+
+const sorrowfulLayout: EyeLayout = {
+  left: {
+    opened: "M 0 4 C 3 6.5 6 7 10 4 C 6 1.5 3 3 0 4",
+    closed: CLOSED,
+  },
+  right: {
+    opened: "M 0 4 C 4 7 7 6.5 10 4 C 7 3 4 1.5 0 4",
+    closed: CLOSED,
+  },
+  pupil: { cx: 5, cy: 4 },
+};
+
+const squintingLayout: EyeLayout = {
+  left: {
+    opened: "M 0 4 C 3 5.2 7 5.2 10 4 C 7 2.8 3 2.8 0 4",
+    closed: CLOSED,
+  },
+  right: {
+    opened: "M 0 4 C 3 5.2 7 5.2 10 4 C 7 2.8 3 2.8 0 4",
+    closed: CLOSED,
+  },
+  pupil: { cx: 5, cy: 4 },
+};
+
+const furiousLayout: EyeLayout = {
+  left: {
+    opened: "M 0 4 C 3 6.8 6 7 10 4 C 6 3.5 2 1 0 4",
+    closed: CLOSED,
+  },
+  right: {
+    opened: "M 0 4 C 4 7 7 6.8 10 4 C 8 1 4 3.5 0 4",
+    closed: CLOSED,
+  },
+  pupil: { cx: 5, cy: 4.5 },
 };
 
 interface EyeSetConfig {
@@ -65,41 +144,48 @@ interface EyeSetConfig {
   layout: EyeLayoutPresets | EyeLayout;
   irisColor: string;
   side: "left" | "right";
-  top: string;
+  topVh: number; // base position
 }
 
 const EYE_SETS: EyeSetConfig[] = [
-  { id: "unfriendly", layout: "unfriendly", irisColor: "#c43b3b", side: "left", top: "18vh" },
-  { id: "menacing", layout: "menacing", irisColor: "#e08e2b", side: "left", top: "62vh" },
-  { id: "neutral", layout: "neutral", irisColor: "#8a5fd4", side: "right", top: "30vh" },
-  { id: "weary", layout: wearyLayout, irisColor: "#4faf5c", side: "right", top: "72vh" },
+  { id: "unfriendly", layout: "unfriendly", irisColor: "#c43b3b", side: "left", topVh: 10 },
+  { id: "startled", layout: startledLayout, irisColor: "#4f9fd4", side: "left", topVh: 28 },
+  { id: "menacing", layout: "menacing", irisColor: "#e08e2b", side: "left", topVh: 46 },
+  { id: "sly", layout: slyLayout, irisColor: "#c94fd0", side: "left", topVh: 64 },
+  { id: "squinting", layout: squintingLayout, irisColor: "#d47f4f", side: "left", topVh: 82 },
+  { id: "neutral", layout: "neutral", irisColor: "#8a5fd4", side: "right", topVh: 14 },
+  { id: "crazed", layout: crazedLayout, irisColor: "#d4c23f", side: "right", topVh: 32 },
+  { id: "weary", layout: wearyLayout, irisColor: "#4faf5c", side: "right", topVh: 50 },
+  { id: "sorrowful", layout: sorrowfulLayout, irisColor: "#3fb8a8", side: "right", topVh: 68 },
+  { id: "furious", layout: furiousLayout, irisColor: "#e04f6a", side: "right", topVh: 86 },
 ];
 
-/** Horizontal center of the side margin, for one set of eyes */
-function marginPosition(side: "left" | "right"): CSSProperties {
-  const offset = `calc((100vw - ${CONTENT_MAX_W}px) / 4 - ${EYES_W / 2}px)`;
+function marginPosition(side: "left" | "right", xFraction: number): CSSProperties {
+  const offset = `calc((100vw - ${CONTENT_MAX_W}px) * ${0.25 + xFraction} - ${EYES_W / 2}px)`;
   return side === "left" ? { left: offset } : { right: offset };
 }
 
 function EyeSet({
   config,
+  topOffsetVh,
+  xOffsetFraction,
   open,
-  onDismiss,
 }: {
   config: EyeSetConfig;
+  topOffsetVh: number;
+  xOffsetFraction: number;
   open: boolean;
-  onDismiss: () => void;
 }) {
   return (
     <div
       style={{
         position: "fixed",
-        top: config.top,
-        ...marginPosition(config.side),
-        padding: 12, // comfortable hover target around the eyes
+        // min() keeps the lowest pairs fully on-screen on short windows
+        top: `min(${config.topVh + topOffsetVh}vh, calc(100vh - ${EYES_H + 12}px))`,
+        ...marginPosition(config.side, xOffsetFraction),
         zIndex: 30,
+        pointerEvents: "none",
       }}
-      onMouseEnter={onDismiss}
     >
       <Eyes
         open={open}
@@ -113,16 +199,20 @@ function EyeSet({
 }
 
 interface SpookyEyesProps {
-  /** Render only when true (pass the app's dark-mode flag) */
   active: boolean;
-  /** Increment to clear the persisted dismissals and re-open every set */
-  wakeSignal?: number;
+  asleep: boolean;
 }
 
-export function SpookyEyes({ active, wakeSignal = 0 }: SpookyEyesProps) {
+export function SpookyEyes({ active, asleep }: SpookyEyesProps) {
   const hasRoom = useEyesHaveRoom();
   const [awake, setAwake] = useState(false);
-  const [dismissed, setDismissed] = useState<number[]>(readDismissed);
+
+  const [offsets] = useState(() =>
+    EYE_SETS.map(() => ({
+      topVh: (Math.random() - 0.5) * TOP_JITTER_VH,
+      xFraction: (Math.random() - 0.5) * 2 * X_JITTER_FRACTION,
+    })),
+  );
 
   useEffect(() => {
     const onScroll = () => setAwake(window.scrollY > 0);
@@ -136,32 +226,6 @@ export function SpookyEyes({ active, wakeSignal = 0 }: SpookyEyesProps) {
     };
   }, []);
 
-  // The "Wake up" button was pressed: forget every dismissal and open all
-  // the eyes, regardless of scroll position.
-  useEffect(() => {
-    if (!wakeSignal) return;
-    try {
-      localStorage.removeItem(SLEEPING_EYES_KEY);
-    } catch {
-      /* ignore */
-    }
-    setDismissed([]);
-    setAwake(true);
-  }, [wakeSignal]);
-
-  const dismiss = (index: number) => {
-    setDismissed((prev) => {
-      if (prev.includes(index)) return prev;
-      const next = [...prev, index];
-      try {
-        localStorage.setItem(SLEEPING_EYES_KEY, JSON.stringify(next));
-      } catch {
-        /* ignore */
-      }
-      return next;
-    });
-  };
-
   if (!active || !hasRoom) return null;
 
   return (
@@ -170,8 +234,9 @@ export function SpookyEyes({ active, wakeSignal = 0 }: SpookyEyesProps) {
         <EyeSet
           key={config.id}
           config={config}
-          open={awake && !dismissed.includes(i)}
-          onDismiss={() => dismiss(i)}
+          topOffsetVh={offsets[i].topVh}
+          xOffsetFraction={offsets[i].xFraction}
+          open={awake && !asleep}
         />
       ))}
     </>

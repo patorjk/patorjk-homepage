@@ -13,10 +13,10 @@ import {/*useCallback,*/ useEffect, useState} from "react";
 //import Cookies from 'js-cookie';
 import {useTheme} from "@/components/theme/useTheme.ts";
 import {Ghost, Moon, Sun} from "lucide-react";
-import {toast, Toaster} from "sonner";
+import {Toaster} from "sonner";
 import {useIsMobile} from "@/hooks/useIsMobile.ts";
 import WaterFillHeading from "@/components/WaterFillHeading.tsx";
-import {SpookyEyes, useEyesHaveRoom} from "@/components/SpookyEyes.tsx";
+import {readEyesAsleep, SpookyEyes, useEyesHaveRoom, writeEyesAsleep} from "@/components/SpookyEyes.tsx";
 
 const patorjkAsciiArt = `
               __                 __ __    
@@ -66,16 +66,17 @@ function App() {
 
   const isMobile = useIsMobile();
 
-  // SpookyEyes wake-up plumbing: the eyes can only appear when there's
-  // room in the side margins; bumping wakeCount clears their persisted
-  // dismissals and re-opens them.
+  // SpookyEyes plumbing: the eyes can only appear when there's room in the
+  // side margins. The Sleep / Wake up button toggles all of them at once,
+  // and the choice persists across visits.
   const eyesHaveRoom = useEyesHaveRoom();
-  const [wakeCount, setWakeCount] = useState(0);
-  const onWakeUp = () => {
-    setWakeCount((c) => c + 1);
-    if (!darkMode) {
-      toast("Hmm, that was weird... good thing we're in light mode...");
-    }
+  const [eyesAsleep, setEyesAsleep] = useState(readEyesAsleep);
+  const onToggleEyes = () => {
+    setEyesAsleep((prev) => {
+      const next = !prev;
+      writeEyesAsleep(next);
+      return next;
+    });
   };
 
   const contentItems: ContentItem[] = [
@@ -284,7 +285,7 @@ function App() {
 
   return (
     <>
-      <SpookyEyes active={darkMode} wakeSignal={wakeCount}/>
+      <SpookyEyes active={darkMode} asleep={eyesAsleep}/>
       <Toaster theme={darkMode ? 'dark' : 'light'}/>
       <div
         className={'flex flex-col gap-8 justify-center items-center relative p-10 max-w-xl md:max-w-4xl justify-self-center'}>
@@ -428,13 +429,13 @@ function App() {
           >
             {darkMode ? <Sun className="w-5 h-5 text-yellow-400"/> : <Moon className="w-5 h-5 text-indigo-600"/>} Theme
           </button>
-          {eyesHaveRoom &&
+          {darkMode && eyesHaveRoom &&
             <button
               type={"button"}
-              onClick={onWakeUp}
+              onClick={onToggleEyes}
               className={`cursor-pointer px-6 py-3 rounded-lg shadow-lg hover:opacity-80 transition-opacity flex flex-cols items-center gap-2 justify-center`}
             >
-              <Ghost className="w-5 h-5 text-purple-500"/> Wake up
+              <Ghost className="w-5 h-5 text-purple-500"/> {eyesAsleep ? 'Wake up' : 'Sleep'}
             </button>
           }
         </div>
