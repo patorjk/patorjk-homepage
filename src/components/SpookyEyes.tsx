@@ -9,6 +9,7 @@ import { useIsMobile } from "@/hooks/useIsMobile.ts";
 const CONTENT_MAX_W = 896;
 const EYES_W = 90;
 const MIN_MARGIN = EYES_W + 48;
+const MIN_VIEWPORT_H = 750;
 const TOP_JITTER_VH = 7;
 const EYES_H = EYES_W * 0.8;
 const X_JITTER_FRACTION = 0.08;
@@ -31,15 +32,17 @@ export function writeEyesAsleep(asleep: boolean): void {
 }
 
 /**
- * True when the page has room for the eyes: non-mobile viewport with side
- * margins wide enough to fit a set.
+ * True when the page has room for the eyes: non-mobile viewport, tall enough,
+ * with side margins wide enough to fit a set.
  */
 export function useEyesHaveRoom(): boolean {
   const isMobile = useIsMobile();
   const [hasSpace, setHasSpace] = useState(false);
 
   useEffect(() => {
-    const roomy = () => (window.innerWidth - CONTENT_MAX_W) / 2 >= MIN_MARGIN;
+    const roomy = () =>
+      (window.innerWidth - CONTENT_MAX_W) / 2 >= MIN_MARGIN &&
+      window.innerHeight >= MIN_VIEWPORT_H;
     setHasSpace(roomy());
     const onResize = () => setHasSpace(roomy());
     window.addEventListener("resize", onResize);
