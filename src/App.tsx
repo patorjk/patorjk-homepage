@@ -162,7 +162,6 @@ function App() {
       title: 'Snake Game',
       description: 'JavaScript Snake game. The classic game of snake done in JS. Very old game.',
       link: '//patorjk.com/games/snake/',
-      desktop: true,
     },
     {
       title: 'Subpixel Snake Game',
