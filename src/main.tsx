@@ -6,7 +6,7 @@ import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider defaultTheme="system" storageKey="homepage-theme">
+    <ThemeProvider defaultTheme="system" storageKey="site-theme">
       <App/>
     </ThemeProvider>
   </StrictMode>,
