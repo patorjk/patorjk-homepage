@@ -112,11 +112,6 @@ function App() {
       link: "//patorjk.com/misc/matrix/"
     },
     {
-      title: "Gradient Image Generator",
-      description: "For creating gradient images (an image that fades from one color to another). A very old app and there aren't many good reasons use it. But it's here just in case.",
-      link: "//patorjk.com/gradient-image-generator/"
-    },
-    {
       title: "Image Glitcher",
       description: <>An application for creating glitched images (mainly jpegs). I've created a <SimpleLink
         href={"https://www.youtube.com/watch?v=7aWFHn1wS1U"}
@@ -438,6 +433,11 @@ function App() {
             </button>
           }
         </div>
+
+        <footer className="text-center text-sm text-muted-foreground flex gap-6">
+          <SimpleLink href="https://patorjk.com/blog/about/" label="About Site"/>
+          <SimpleLink href="https://patorjk.com/privacy-policy.htm" label="Privacy Policy"/>
+        </footer>
       </div>
     </>
   );
